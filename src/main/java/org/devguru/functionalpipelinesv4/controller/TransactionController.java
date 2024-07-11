@@ -7,6 +7,7 @@ import org.devguru.functionalpipelinesv4.standard.TransactionStatus;
 import org.devguru.functionalpipelinesv4.vavr.VavrTransaction;
 import org.devguru.functionalpipelinesv4.vavr.VavrTransactionProcessor;
 import org.devguru.functionalpipelinesv4.vavr.VavrTransactionStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,25 +20,34 @@ import java.util.logging.Logger;
 @RestController
 @RequestMapping("/transaction")
 public class TransactionController {
+  private static final Logger logger = Logger.getLogger(TransactionController.class.getName());
 
   @GetMapping
-  public String transaction() {
-    VavrTransactionProcessor processor = new VavrTransactionProcessor();
-    List<VavrTransaction> transactions = List.of(
-            new VavrTransaction("1", new BigDecimal("100"), "A", "B", LocalDateTime.now(), VavrTransactionStatus.INITIATED),
-            new VavrTransaction("2", new BigDecimal("200"), "C", "D", LocalDateTime.now(), VavrTransactionStatus.INITIATED)
-    );
-    processor.executeTransactions((io.vavr.collection.List<VavrTransaction>) transactions);
-    return "Vavr! Hello World!";
+  public ResponseEntity<String> transaction() {
+    try {
+      VavrTransactionProcessor processor = new VavrTransactionProcessor();
+      List<VavrTransaction> transactions = List.of(
+              new VavrTransaction("1", new BigDecimal("100"), "A", "B", LocalDateTime.now(), VavrTransactionStatus.INITIATED),
+              new VavrTransaction("2", new BigDecimal("200"), "C", "D", LocalDateTime.now(), VavrTransactionStatus.INITIATED)
+      );
+      processor.executeTransactions((io.vavr.collection.List<VavrTransaction>) transactions);
+      return ResponseEntity.ok("Vavr! Hello World!");
+    } catch (Exception e) {
+      logger.warning("Error processing transactions: " + e.getMessage());
+      return ResponseEntity.internalServerError().body("Error processing transactions");
+    }
   }
 
   @GetMapping("/standard")
-  public String standardTransaction() {
-    standardJava();
-    return "Standard! Hello World!";
+  public ResponseEntity<String> standardTransaction() {
+    try {
+      standardJava();
+      return ResponseEntity.ok("Standard! Hello World!");
+    } catch (Exception e) {
+      logger.warning("Error processing standard transactions: " + e.getMessage());
+      return ResponseEntity.internalServerError().body("Error processing standard transactions");
+    }
   }
-
-  private static final Logger logger = Logger.getLogger(TransactionController.class.getName());
 
   public void standardJava() {
     TransactionProcessor processor = new TransactionProcessor();
