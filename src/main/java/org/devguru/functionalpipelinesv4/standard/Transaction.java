@@ -3,13 +3,22 @@ package org.devguru.functionalpipelinesv4.standard;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-class Transaction {
+public class Transaction {
   private String id;
   private BigDecimal amount;
   private String accountFrom;
   private String accountTo;
   private LocalDateTime timestamp;
   private TransactionStatus status;
+
+  public Transaction(String id, BigDecimal amount, String accountFrom, String accountTo, LocalDateTime timestamp, TransactionStatus status) {
+    this.id = id;
+    this.amount = amount;
+    this.accountFrom = accountFrom;
+    this.accountTo = accountTo;
+    this.timestamp = timestamp;
+    this.status = status;
+  }
 
   // Constructor, getters, and setters
 
@@ -62,45 +71,3 @@ class Transaction {
   }
 }
 
-enum TransactionStatus {
-  INITIATED, VALIDATED, PROCESSED, COMPLETED, FAILED
-}
-
-class TransactionResult {
-  private Transaction transaction;
-  private String message;
-  private boolean success;
-
-  public TransactionResult(Transaction transaction, String transactionCompletedSuccessfully, boolean b) {
-    this.transaction = transaction;
-    this.message = transactionCompletedSuccessfully;
-    this.success = b;
-  }
-
-  // Constructor, getters, and setters
-
-
-  public Transaction getTransaction() {
-    return transaction;
-  }
-
-  public void setTransaction(Transaction transaction) {
-    this.transaction = transaction;
-  }
-
-  public String getMessage() {
-    return message;
-  }
-
-  public void setMessage(String message) {
-    this.message = message;
-  }
-
-  public boolean isSuccess() {
-    return success;
-  }
-
-  public void setSuccess(boolean success) {
-    this.success = success;
-  }
-}

@@ -6,10 +6,10 @@ import io.vavr.collection.List;
 import java.math.BigDecimal;
 import java.util.logging.Logger;
 
-public class TransactionProcessor {
-  private static final Logger logger = Logger.getLogger(TransactionProcessor.class.getName());
+public class VavrTransactionProcessor {
+  private static final Logger logger = Logger.getLogger(VavrTransactionProcessor.class.getName());
 
-  public Try<TransactionResult> processTransaction(Transaction transaction) {
+  public Try<VavrTransactionResult> processTransaction(VavrTransaction transaction) {
     return validate(transaction)
             .flatMap(this::enrichTransaction)
             .flatMap(this::processPayment)
@@ -17,17 +17,17 @@ public class TransactionProcessor {
             .flatMap(this::updateDatabase);
   }
 
-  private Try<TransactionResult> validate(Transaction transaction) {
+  private Try<VavrTransactionResult> validate(VavrTransaction transaction) {
     return Try.of(() -> {
       if (transaction.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
         throw new IllegalArgumentException("Invalid amount");
       }
-      transaction.setStatus(TransactionStatus.VALIDATED);
-      return new TransactionResult(transaction, "", true);
+      transaction.setStatus(VavrTransactionStatus.VALIDATED);
+      return new VavrTransactionResult(transaction, "", true);
     });
   }
 
-  private Try<TransactionResult> enrichTransaction(TransactionResult result) {
+  private Try<VavrTransactionResult> enrichTransaction(VavrTransactionResult result) {
     return Try.of(() -> {
       Thread.sleep(100); // Simulate enriching transaction
       return result;
@@ -37,15 +37,15 @@ public class TransactionProcessor {
     });
   }
 
-  private Try<TransactionResult> processPayment(TransactionResult result) {
+  private Try<VavrTransactionResult> processPayment(VavrTransactionResult result) {
     return Try.of(() -> {
       Thread.sleep(200); // Simulate payment processing
-      result.getTransaction().setStatus(TransactionStatus.PROCESSED);
+      result.getTransaction().setStatus(VavrTransactionStatus.PROCESSED);
       return result;
     });
   }
 
-  private Try<TransactionResult> notifyParties(TransactionResult result) {
+  private Try<VavrTransactionResult> notifyParties(VavrTransactionResult result) {
     return Try.run(() -> {
               Thread.sleep(50); // Simulate sending notifications
             }).map(__ -> result)
@@ -55,15 +55,15 @@ public class TransactionProcessor {
             });
   }
 
-  private Try<TransactionResult> updateDatabase(TransactionResult result) {
+  private Try<VavrTransactionResult> updateDatabase(VavrTransactionResult result) {
     return Try.of(() -> {
       Thread.sleep(100); // Simulate database update
-      result.getTransaction().setStatus(TransactionStatus.COMPLETED);
-      return new TransactionResult(result.getTransaction(), "Transaction completed successfully", true);
+      result.getTransaction().setStatus(VavrTransactionStatus.COMPLETED);
+      return new VavrTransactionResult(result.getTransaction(), "Transaction completed successfully", true);
     });
   }
 
-  public void executeTransactions(List<Transaction> transactions) {
+  public void executeTransactions(List<VavrTransaction> transactions) {
     transactions.forEach(transaction ->
             processTransaction(transaction)
                     .onSuccess(result -> logger.info("Transaction processed: " + result.getMessage()))
