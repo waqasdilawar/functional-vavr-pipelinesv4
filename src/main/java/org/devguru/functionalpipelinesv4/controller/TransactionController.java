@@ -31,7 +31,7 @@ public class TransactionController {
     return "Hello World!";
   }
 
-  @GetMapping
+  @GetMapping("/standard")
   public String standardTransaction() {
     standardJava();
     return "Hello World!";
