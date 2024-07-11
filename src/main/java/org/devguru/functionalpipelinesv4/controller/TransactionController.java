@@ -28,13 +28,13 @@ public class TransactionController {
             new VavrTransaction("2", new BigDecimal("200"), "C", "D", LocalDateTime.now(), VavrTransactionStatus.INITIATED)
     );
     processor.executeTransactions((io.vavr.collection.List<VavrTransaction>) transactions);
-    return "Hello World!";
+    return "Vavr! Hello World!";
   }
 
   @GetMapping("/standard")
   public String standardTransaction() {
     standardJava();
-    return "Hello World!";
+    return "Standard! Hello World!";
   }
 
   private static final Logger logger = Logger.getLogger(TransactionController.class.getName());
