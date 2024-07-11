@@ -98,6 +98,27 @@ Example JSON Request Bodies
     "status": "INITIATED"
   }
 ]
+
+curl -X POST http://localhost:8080/transaction \
+     -H "Content-Type: application/json" \
+     -d '[
+           {
+             "id": "txn123",
+             "amount": 100.00,
+             "accountFrom": "account1",
+             "accountTo": "account2",
+             "timestamp": "2023-10-01T12:00:00",
+             "status": "INITIATED"
+           },
+           {
+             "id": "txn124",
+             "amount": 200.00,
+             "accountFrom": "account3",
+             "accountTo": "account4",
+             "timestamp": "2023-10-01T13:00:00",
+             "status": "INITIATED"
+           }
+         ]'
 ```
 
 ## Standard Transactions
@@ -119,6 +140,27 @@ Example JSON Request Bodies
     "status": "PENDING"
   }
 ]
+
+curl -X POST http://localhost:8080/transaction/standard \
+     -H "Content-Type: application/json" \
+     -d '[
+           {
+             "id": "txn125",
+             "amount": 150.00,
+             "accountFrom": "account5",
+             "accountTo": "account6",
+             "timestamp": "2023-10-01T14:00:00",
+             "status": "PENDING"
+           },
+           {
+             "id": "txn126",
+             "amount": 250.00,
+             "accountFrom": "account7",
+             "accountTo": "account8",
+             "timestamp": "2023-10-01T15:00:00",
+             "status": "PENDING"
+           }
+         ]'
 ```
 ## Running the Application
 You can run the application using your IDE or by using Maven:
@@ -130,4 +172,4 @@ You can run the integration tests using your IDE's built-in test runner or by us
 
 `mvn test`
 
-These updates to the README.md file provide clear instructions on how to use the new request body format for both Vavr and standard transactions, ensuring that users can easily test the endpoints with appr
+These updates to the README.md file provide clear instructions on how to use the new request body format for both Vavr and standard transactions, including example curl commands to test the endpoints with appropriate data.
