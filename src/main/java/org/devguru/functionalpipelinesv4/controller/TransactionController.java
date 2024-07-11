@@ -39,7 +39,7 @@ public class TransactionController {
               new VavrTransaction("1", new BigDecimal("100"), "A", "B", LocalDateTime.now(), VavrTransactionStatus.INITIATED),
               new VavrTransaction("2", new BigDecimal("200"), "C", "D", LocalDateTime.now(), VavrTransactionStatus.INITIATED)
       );
-      processor.executeTransactions((io.vavr.collection.List<VavrTransaction>) transactions);
+      processor.executeTransactions((io.vavr.collection.List.ofAll(transactions)));
       return ResponseEntity.ok("Vavr! Hello World!");
     } catch (Exception e) {
       logger.warning("Error processing transactions: " + e.getMessage());
