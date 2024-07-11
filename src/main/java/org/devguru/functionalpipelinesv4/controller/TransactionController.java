@@ -22,6 +22,15 @@ import java.util.logging.Logger;
 public class TransactionController {
   private static final Logger logger = Logger.getLogger(TransactionController.class.getName());
 
+  /**
+   * Handles GET requests for transactions.
+   *
+   * This method initializes a list of VavrTransaction objects and processes them using the VavrTransactionProcessor.
+   * If the transactions are processed successfully, it returns a response with a success message.
+   * If an error occurs during processing, it logs the error and returns an internal server error response.
+   *
+   * @return ResponseEntity<String> - A response entity containing either a success message or an error message.
+   */
   @GetMapping
   public ResponseEntity<String> transaction() {
     try {
@@ -38,6 +47,15 @@ public class TransactionController {
     }
   }
 
+  /**
+   * Handles GET requests for standard transactions.
+   *
+   * This method calls the standardJava method to process standard transactions.
+   * If the transactions are processed successfully, it returns a response with a success message.
+   * If an error occurs during processing, it logs the error and returns an internal server error response.
+   *
+   * @return ResponseEntity<String> - A response entity containing either a success message or an error message.
+   */
   @GetMapping("/standard")
   public ResponseEntity<String> standardTransaction() {
     try {
@@ -49,7 +67,7 @@ public class TransactionController {
     }
   }
 
-  public void standardJava() {
+  private void standardJava() {
     TransactionProcessor processor = new TransactionProcessor();
 
     // Process a single transaction
