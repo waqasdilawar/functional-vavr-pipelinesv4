@@ -69,5 +69,12 @@ public class VavrTransaction {
   public void setStatus(VavrTransactionStatus status) {
     this.status = status;
   }
+
+  public void setForceEnrichmentFailure(boolean b) {
+    
+  }
+
+  public void setForcePaymentFailure(boolean b) {
+  }
 }
 
