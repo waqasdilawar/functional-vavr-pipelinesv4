@@ -3,17 +3,11 @@ package org.devguru.functionalpipelinesv4.controller;
 import org.devguru.functionalpipelinesv4.standard.Transaction;
 import org.devguru.functionalpipelinesv4.standard.TransactionProcessor;
 import org.devguru.functionalpipelinesv4.standard.TransactionResult;
-import org.devguru.functionalpipelinesv4.standard.TransactionStatus;
 import org.devguru.functionalpipelinesv4.vavr.VavrTransaction;
 import org.devguru.functionalpipelinesv4.vavr.VavrTransactionProcessor;
-import org.devguru.functionalpipelinesv4.vavr.VavrTransactionStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -31,15 +25,10 @@ public class TransactionController {
    *
    * @return ResponseEntity<String> - A response entity containing either a success message or an error message.
    */
-  @GetMapping
-  public ResponseEntity<String> transaction() {
+  @PostMapping("/vavr")
+  public ResponseEntity<String> transaction(@RequestBody List<VavrTransaction> transactions) {
     try {
-      VavrTransactionProcessor processor = new VavrTransactionProcessor();
-      List<VavrTransaction> transactions = List.of(
-              new VavrTransaction("1", new BigDecimal("100"), "A", "B", LocalDateTime.now(), VavrTransactionStatus.INITIATED),
-              new VavrTransaction("2", new BigDecimal("200"), "C", "D", LocalDateTime.now(), VavrTransactionStatus.INITIATED)
-      );
-      processor.executeTransactions((io.vavr.collection.List.ofAll(transactions)));
+      new VavrTransactionProcessor().executeTransactions((io.vavr.collection.List.ofAll(transactions)));
       return ResponseEntity.ok("Vavr! Hello World!");
     } catch (Exception e) {
       logger.warning("Error processing transactions: " + e.getMessage());
@@ -56,47 +45,27 @@ public class TransactionController {
    *
    * @return ResponseEntity<String> - A response entity containing either a success message or an error message.
    */
-  @GetMapping("/standard")
-  public ResponseEntity<String> standardTransaction() {
+  @PostMapping("/standard")
+  public ResponseEntity<String> standardTransaction(@RequestBody List<Transaction> transactions) {
     try {
-      standardJava();
+      var processor = new TransactionProcessor();
+      transactions.stream()
+              .map(processor::processTransaction)
+              .peek(result -> {
+                if (result.isSuccess()) {
+                  logger.info("Transaction processed successfully: " + result.getMessage());
+                } else {
+                  logger.warning("Transaction processing failed: " + result.getMessage());
+                }
+              })
+              .forEach(result -> {
+              }); // No-op forEach to trigger the stream processing
+
+
       return ResponseEntity.ok("Standard! Hello World!");
     } catch (Exception e) {
       logger.warning("Error processing standard transactions: " + e.getMessage());
       return ResponseEntity.internalServerError().body("Error processing standard transactions");
-    }
-  }
-
-  private void standardJava() {
-    TransactionProcessor processor = new TransactionProcessor();
-
-    // Process a single transaction
-    Transaction singleTransaction = new Transaction("1", new BigDecimal("100"), "A", "B", LocalDateTime.now(), TransactionStatus.INITIATED);
-    TransactionResult result = processor.processTransaction(singleTransaction);
-    logResult(result);
-
-    // Process multiple transactions
-    List<Transaction> transactions = List.of(
-            new Transaction("2", new BigDecimal("200"), "C", "D", LocalDateTime.now(), TransactionStatus.INITIATED),
-            new Transaction("3", new BigDecimal("300"), "E", "F", LocalDateTime.now(), TransactionStatus.INITIATED),
-            new Transaction("4", new BigDecimal("-50"), "G", "H", LocalDateTime.now(), TransactionStatus.INITIATED) // Invalid amount
-    );
-
-    processTransactions(processor, transactions);
-  }
-
-  private static void logResult(TransactionResult result) {
-    if (result.isSuccess()) {
-      logger.info("Transaction processed successfully: " + result.getMessage());
-    } else {
-      logger.warning("Transaction processing failed: " + result.getMessage());
-    }
-  }
-
-  private static void processTransactions(TransactionProcessor processor, List<Transaction> transactions) {
-    for (Transaction transaction : transactions) {
-      TransactionResult result = processor.processTransaction(transaction);
-      logResult(result);
     }
   }
 }
